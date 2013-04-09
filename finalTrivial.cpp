@@ -9,7 +9,6 @@
 
 #include <sstream>
 using namespace std;
-#define DEBUG
 
 
 int runit(const vector<string>& argv)
@@ -64,24 +63,15 @@ int main()
 		istringstream iss(cmd);
 		
 		vector<string> argv;
-//		vector< vector<string> > argvv; // a vector of string vectors :D 
 		do
 	    {
 	        string substr;
 	        iss >> substr;
 	        if (substr == "#") break;
-//	        if (substr == ";") argvv.push_back(argv); 
 			if (substr == ";") 
 			{
-				puts ("semicolong detected: existing vector");
-				for(int i = 0; i < argv.size(); ++i)
-					puts(argv[i].c_str());
-				
 				runit(argv);
 				argv.clear();
-				puts("vector cleared");
-				for(int i = 0; i < argv.size(); ++i)
-					puts(argv[i].c_str());
 			}
 	        if (substr != "" && substr != ";") argv.push_back(substr);
 	    } while (iss);
@@ -95,8 +85,6 @@ int main()
 			puts("---------------");
 			#endif
 			
-//			for (int i = argvv.size(); i >= 0; --i)
-//				runit(argvv[i]);
 			runit(argv);
 		}
     }
