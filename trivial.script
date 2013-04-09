@@ -1,0 +1,13 @@
+#! ./trivial-shell
+# This is a comment.
+/bin/echo
+   killroy was here; ;
+#
+# magic word:
+xyzzy
+;
+
+nonexistent-program ;
+; ; # empty program
+/bin/true ;
+/bin/false ;
