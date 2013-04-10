@@ -6,83 +6,85 @@
 #include <vector>
 #include <stdio.h>
 #include <string.h>
+
+#include <sstream>
 using namespace std;
+
+
+int runit(const vector<string>& argv)
+{
+	if (argv[0] == "exit") return 0;
+	else if (argv[0] == "cd")  //built-in "cd" command
+			chdir(argv[1].c_str());
+	else if (argv[0] == "xyzzy")  //built-in "xyzzy" command
+    {
+		puts("Nothing happens.");
+	}
+	else // run a program
+    {
+		pid_t childpid = fork();  //create the child process
+
+		if (childpid < 0)
+		{
+			puts("Error:Failed to fork.");
+			return 1;
+		}
+		else if (childpid == 0) // the child process
+		{
+			char* arglist[128];
+			for(int k = 0; k < argv.size() && k < 127; ++k)
+				strcpy(arglist[k], argv[k].c_str());
+		    arglist[argv.size()] = NULL;
+
+			cout << "executing \"" << argv[0] << "\"" << endl;
+			execvp(argv[0].c_str(), arglist);
+		}
+		else  // the parent process
+		{
+			int status = 0;
+			waitpid(childpid, &status, 0); // wait for the child
+			cout << "Child process exit status: " << status << endl;
+			return status;
+		}
+	}
+}
 
 int main()
 {
-	while (true)
+	while (!cin.eof())
     {
 		// print the prompt
 		cout << "|> " ;
 		
 		// get input
-		char cmd[1000];
-		cin.getline(cmd, 1000);
+		char cmd[128];
+		cin.getline(cmd, 128);
+		istringstream iss(cmd);
 		
-		char* program = strtok(cmd, " "); //collect token strings
-		char* temp = program;
+		vector<string> argv;
+		do
+	    {
+	        string substr;
+	        iss >> substr;
+	        if (substr == "#") break;
+			if (substr == ";") 
+			{
+				runit(argv);
+				argv.clear();
+			}
+	        if (substr != "" && substr != ";") argv.push_back(substr);
+	    } while (iss);
 		
-		vector<char*> args;
-		while (temp != NULL)
-		{	
-			args.push_back(temp);
-			temp = strtok(NULL, " ");
-		}
-      
-		char** argv = new char*[args.size() + 2];
-		
-		for (int k = 0; k < args.size(); k++)
+		if (!argv.empty())
 		{
-			argv[k] = args[k];
-		}
-		
-		argv[args.size()] = NULL;
-		
-		if (strcmp(program, "exit") == 0) //exit if the command is "exit"
-		{
-			return 0;
-		}
-		else if (strcmp(program, "cd") == 0)  //built-in "cd" command
-	    {
-			if (argv[1] == NULL)
-			{
-				chdir("/");
-			}
-			else
-			{
-				chdir(argv[1]);
-			}
-		}
-		else if (strcmp(program, "xyzzy") == 0)  //built-in "xyzzy" command
-	    {
-			cout << "Nothing happens." << endl;
-		}
-		else // run a program
-	    {
-			pid_t childpid = fork();  //create the child process
-
-			if (childpid < 0)
-			{
-				perror("Error:Failed to fork.");
-				return 1;
-			}
-			else if (childpid == 0) //process creation is successful
-			{
-				//the child process
-				execvp(argv[0], argv);
-				
-				perror(argv[0]);
-				return 1;
-			}
-			else
-			{
-				// This is the parent.  Need to wait for the child.
-				if (waitpid(childpid, 0, 0) < 0)
-				{
-					perror("Internal error: cannot wait for child.");
-					return 1;
-				}
-			}
+			#ifdef DEBUG
+			puts("substrings:");
+			for(int i = 0; i < argv.size(); ++i)
+				puts(argv[i].c_str());
+			puts("---------------");
+			#endif
+			
+			runit(argv);
 		}
     }
 	return 0;
