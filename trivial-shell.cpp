@@ -43,7 +43,7 @@ int runit(const vector<string>& argv)
 			int status = 0;
 			waitpid(childpid, &status, 0); // wait for the child
 			cout << "Child process exit status: " << status << endl;
-			return status;
+			//return status;
 		}
 	}
 }
@@ -60,6 +60,8 @@ int main()
 		cin.getline(cmd, 128);
 		istringstream iss(cmd);
 		
+		cout << "-->" << cmd << endl;
+		
 		vector<string> argv;
 		do
 	    {
@@ -68,8 +70,16 @@ int main()
 	        if (substr == "#") break;
 			if (substr == ";") 
 			{
+				
+				
+				for(int i = 0; i < argv.size(); ++i)
+					puts(argv[i].c_str());
+				
+				
+				
 				runit(argv);
-				argv.clear();
+				if (!argv.empty())
+					argv.clear();
 			}
 	        if (substr != "" && substr != ";") argv.push_back(substr);
 	    } while (iss);
@@ -83,7 +93,12 @@ int main()
 			puts("---------------");
 			#endif
 			
+//			int returnStatus = 1337;
+//			returnStatus = runit(argv);
 			runit(argv);
+			
+//			if (returnStatus != 1337) // If runit returns anything then return that
+//				return returnStatus;
 		}
     }
 	return 0;
