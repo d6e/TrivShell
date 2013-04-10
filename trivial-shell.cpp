@@ -10,7 +10,6 @@
 #include <sstream>
 using namespace std;
 
-
 int runit(const vector<string>& argv)
 {
 	if (argv[0] == "exit") return 0;
