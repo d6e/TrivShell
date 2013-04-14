@@ -1,4 +1,4 @@
-#! ./trivial-shell
+#! ./a.out
 # This is a comment.
 /bin/echo
    killroy was here; ;
