@@ -1,0 +1,5 @@
+#!/bin/bash
+
+set -x
+g++ trivial-shell.cpp -g -Wall -Werror
+./a.out

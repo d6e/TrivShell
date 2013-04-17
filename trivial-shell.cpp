@@ -7,14 +7,26 @@
 #include <stdio.h>
 #include <string.h>
 #include <sstream>
+#include <typeinfo>
+#include <algorithm>
 using namespace std;
+
+/*
+Things to remember: 
+	Change path in script
+	Merge testing and master branches
+	Don't forget class notes during merge
+
+Questions:
+	How do i implement #! ./trivial-shell ??
+	Why does my exit status not work?
+*/
 
 int runit(const vector<string>& argv)
 {
-		cout << "argv: " << endl;
-		for(int i = 0; i < argv.size(); i++)
-			cout << argv[i] << endl;
-
+		cout << "->argv: " << endl;
+		for(unsigned int i = 0; i < argv.size(); i++)
+			cout << "->" << argv[i] << endl;
 
 
 	if (argv[0] == "exit") return 0;
@@ -35,12 +47,36 @@ int runit(const vector<string>& argv)
 		}
 		else if (childpid == 0) // the child process
 		{
-			char* arglist[128];
-			for(int k = 0; k < argv.size() && k < 127; ++k)
-				strcpy(arglist[k], argv[k].c_str());
-		    arglist[argv.size()] = NULL;
+			
+			cout << "child" << endl;
+		/*	char* arglist[1000];
+			const char rawr[10] = "rawr";
+			cout << "type: " << typeid(argv[0].c_str()).name() << endl;
+			cout << "typeC: " << typeid(rawr).name() << endl;
+			for(unsigned int k = 0; k < 50; ++k)
+			{
 
-			cout << "executing \"" << argv[0] << "\"" << endl;
+				cout << "test: " << k << endl;
+				//strcpy(arglist[k+1], argv[k].c_str());
+			}
+		    
+		    arglist[argv.size()] = NULL;
+		*/
+
+
+			std::vector<char*>  vc;
+
+			std::transform(argv.begin(), argv.end(), std::back_inserter(vc), convert);   
+
+			for ( size_t i = 0 ; i < vc.size() ; i++ )
+			    std::cout << vc[i] << std::endl;
+
+
+
+
+
+
+			cout << "executing \"" << argv[0].c_str() << "\"" << endl;
 			execvp(argv[0].c_str(), arglist);
 		}
 		else  // the parent process
@@ -51,6 +87,7 @@ int runit(const vector<string>& argv)
 			//return status;
 		}
 	}
+	return 0;
 }
 
 int main()
@@ -58,7 +95,6 @@ int main()
 	vector<string> argv;
 	bool quitLoop = false;
 	int test = 0;
-	int test2 = 0;
 	while (quitLoop == false)  //prompt update loop
     {
      	cout << endl;  // This ends things   ~(*o*)~  MaGiC!!
@@ -109,11 +145,6 @@ int main()
 //	        	cout << "Pushed back: " << substr << endl;
 	        }
 	    }
-
-
-
-
-
 
 
 /*		

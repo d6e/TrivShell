@@ -9,10 +9,10 @@
 #include <sstream>
 using namespace std;
 
-int runit(char**& argv)
+int runit(char** argv)
 {
 
-cout << "runit works" << endl;
+	cout << "runit works" << endl;
 
 	if (argv[0] == "cd")  //built-in "cd" command
 			chdir(argv[1]);
@@ -69,7 +69,7 @@ int main()
 		
 		if(cin.eof()) //check if file is done
 		{
-			quitLoop = true;
+			//quitLoop = true;
 		}
 
 		while (iss)
