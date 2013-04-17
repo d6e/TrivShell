@@ -33,12 +33,15 @@ int main()
 				argv[k] = args[k];
 			}
 			
-			argv[args.size()] = NULL;
+			argv[args.size()] = NULL; //make sure the end is null
 			
 
 
-			if(strcmp(program, ";") == 0) // run a program
+			if(strcmp(program, ";") == 0 && !args.empty()) // run a program
 		    {
+		    	if (args.empty())
+		    		cout << "WARN: ARGV EMPTY" << endl;
+
 				pid_t childpid = fork();
 
 				if (childpid < 0)
@@ -60,9 +63,10 @@ int main()
 					// This is the parent.  Need to wait for the child.
 					waitpid(childpid, &status, 0);
 					cout << "Child process exit status: " << status << endl;
+					args.clear();
 				}
-				//args.clear();
-				break;
+				
+				
 			}			
 			else if (strcmp(program, "exit") == 0) //exit if the command is "exit"
 			{
@@ -79,22 +83,22 @@ int main()
 			}
 			else
 			{
-				args.push_back(program);
-	        	program = strtok(NULL, " ");
+				if (strcmp(program, "") == 0 || strcmp(program, " ") == 0 )
+					cout << "prog is empty" << endl;
+				if (strcmp(program, ";") != 0) 
+				{
+					args.push_back(program);
+		        	program = strtok(NULL, " "); //clear program so we can move on
+				}
+				else
+				{
+					cout << "avoiding semicolon" << endl;
+					program = strtok(NULL, " "); //clear program so we can move on
+				}
 			}
-	      
+			
 	    }
-/*
-		char* temp = program;
-		
-		cout << "program: " << program << endl;
-		while (temp != NULL)
-		{	
-			args.push_back(temp);
-			temp = strtok(NULL, " ");
-		}
-*/     
-		
+//	    args.clear();
     }
 	return 0;
 }
