@@ -11,8 +11,10 @@ using namespace std;
 
 int runit(char**& argv)
 {
-	if (argv[0] == "exit") return 0;
-	else if (argv[0] == "cd")  //built-in "cd" command
+
+cout << "runit works" << endl;
+
+	if (argv[0] == "cd")  //built-in "cd" command
 			chdir(argv[1]);
 	else if (argv[0] == "xyzzy")  //built-in "xyzzy" command
     {
