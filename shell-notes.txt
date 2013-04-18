@@ -1,0 +1,13 @@
+Try getting each line like before but only calling "runit()" when an argument is a semicolon.
+use perror
+
+Bash "run" script that
+- compile
+- run a sample program
+
+
+shell does:
+    string processing
+    system stuff
+
+The runit() is somehow causing the double back. Removing it solves the problem.
