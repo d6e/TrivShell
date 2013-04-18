@@ -21,11 +21,11 @@ int main()
 		
 	    while(cmdStr != NULL)
 	    {
-	    	char** argv = new char*[args.size() + 2]; //need a char* array
+	    	char** argv = new char*[args.size() + 2]; //need an array of c-strings
 
 			for (int k = 0; k < args.size(); k++)
 			{
-				argv[k] = args[k];
+				argv[k] = args[k];  // load command and arguments into the array of c-strings
 			}
 			
 			argv[args.size()] = NULL; //make sure the end is null
