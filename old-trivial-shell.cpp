@@ -11,22 +11,24 @@ using namespace std;
 int main()
 {
 	vector<char*> args;
+	bool commented = false;
+	bool prompt = true;
 	while (!cin.eof())
     {
-		// print the prompt
-		cout << "|> " ;
-		
-		// get input
-		char cmd[1000];
-		cin.getline(cmd, 1000);
+    	if(prompt == true)
+			cout << "|> "; // print the prompt
+		else
+			prompt = true;
 
-		cout << "cmd: " << cmd << endl;
+		// get input
+		char cmd[128];
+		cin.getline(cmd, 128);
+
 		char* program = strtok(cmd, " "); //collect token strings
 		
-	    while(program)
+	    while(program != NULL)
 	    {
 	    	char** argv = new char*[args.size() + 2];
-			
 
 			for (int k = 0; k < args.size(); k++)
 			{
@@ -37,9 +39,6 @@ int main()
 			
 			if(strcmp(program, ";") == 0 && !args.empty()) // run a program
 		    {
-		    	if (args.empty())
-		    		cout << "WARN: ARGV EMPTY" << endl;
-
 				pid_t childpid = fork();
 
 				if (childpid < 0)
@@ -62,6 +61,8 @@ int main()
 					// This is the parent.  Need to wait for the child.
 					waitpid(childpid, &status, 0);
 					cout << "Child process exit status: " << status << endl;
+					for(int i = 0; i < args.size(); i++)
+						delete args[i]; 
 					args.clear();
 				}
 			}			
@@ -72,27 +73,28 @@ int main()
 			}
 			else if (strcmp(program, "#") == 0) // comment
 			{
+				prompt = false;
 				delete[] argv;
 				break;
 			}
 			else if (strcmp(program, "xyzzy") == 0)  //built-in "xyzzy" command
 		    {
 				cout << "Nothing happens." << endl;
+				prompt = false;
 				delete[] argv;
 				break;
 			}
 			else
 			{
-				if (strcmp(program, "") == 0 || strcmp(program, " ") == 0 )
-					cout << "prog is empty" << endl;
 				if (strcmp(program, ";") != 0) 
 				{
-					args.push_back(program);
+					char *c = new char[128]; // sizeof "hello" will give 6
+					memcpy(c, program, 128);
+					args.push_back(c);
 		        	program = strtok(NULL, " "); //clear program so we can move on
 				}
 				else
 				{
-					cout << "avoiding semicolon" << endl;
 					program = strtok(NULL, " "); //clear program so we can move on
 				}
 			}
