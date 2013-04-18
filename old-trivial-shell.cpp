@@ -1,7 +1,7 @@
 #include <unistd.h>     
 #include <sys/types.h>  
 #include <sys/wait.h>   
-#include <signal.h>     // signal name constants and kill() *possibly kill
+#include <signal.h>     
 #include <iostream>
 #include <vector>
 #include <stdio.h>
@@ -21,13 +21,13 @@ int main()
 		cin.getline(cmd, 1000);
 
 		cout << "cmd: " << cmd << endl;
-		// have to put each word into vector
 		char* program = strtok(cmd, " "); //collect token strings
 		
 	    while(program)
 	    {
 	    	char** argv = new char*[args.size() + 2];
-		
+			
+
 			for (int k = 0; k < args.size(); k++)
 			{
 				argv[k] = args[k];
@@ -35,8 +35,6 @@ int main()
 			
 			argv[args.size()] = NULL; //make sure the end is null
 			
-
-
 			if(strcmp(program, ";") == 0 && !args.empty()) // run a program
 		    {
 		    	if (args.empty())
@@ -46,6 +44,7 @@ int main()
 
 				if (childpid < 0)
 				{
+					delete[] argv;
 					perror("Error:Failed to fork.");
 					return 1;
 				}
@@ -53,7 +52,7 @@ int main()
 				{
 					cout << "executing \"" << argv[0] << "\"" << endl;
 					execvp(argv[0], argv);
-					
+					delete[] argv;
 					perror(argv[0]);
 					return 1;
 				}
@@ -65,20 +64,21 @@ int main()
 					cout << "Child process exit status: " << status << endl;
 					args.clear();
 				}
-				
-				
 			}			
 			else if (strcmp(program, "exit") == 0) //exit if the command is "exit"
 			{
+				delete[] argv;
 				return 0;
 			}
 			else if (strcmp(program, "#") == 0) // comment
 			{
+				delete[] argv;
 				break;
 			}
 			else if (strcmp(program, "xyzzy") == 0)  //built-in "xyzzy" command
 		    {
 				cout << "Nothing happens." << endl;
+				delete[] argv;
 				break;
 			}
 			else
@@ -96,9 +96,8 @@ int main()
 					program = strtok(NULL, " "); //clear program so we can move on
 				}
 			}
-			
+			delete[] argv;
 	    }
-//	    args.clear();
     }
 	return 0;
 }
