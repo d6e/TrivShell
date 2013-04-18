@@ -1,5 +1,5 @@
 #!/bin/bash
 
 set -x
-g++ trivial-shell.cpp -g -Wall -Werror
-./a.out
+g++ trivial-shell.cpp -o trivial-shell
+./trivial-shell < trivial.script
