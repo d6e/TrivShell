@@ -1,4 +1,8 @@
 #! trivial-shell
+
+## This is a script used for testing the basic functionality of trivshell.
+
+
 # This is a comment.
 /bin/echo
    killroy was here; ;
